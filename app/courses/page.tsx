@@ -1,44 +1,57 @@
-import { notFound } from "next/navigation";
-import { getCourse, getCourses } from "@/lib/courses";
-import LikeButton from "@/components/LikeButton";
+import { getCourses } from "@/lib/courses";
+import CourseCard from "@/components/CourseCard";
 
-type CoursePageProps = {
-    params: Promise<{ id: string }>;
-};
-
-export async function generateStaticParams() {
+export default async function CoursesPage() {
     const courses = await getCourses();
 
-    return courses.map((course) => ({
-        id: course.id,
-    }));
-}
-
-export default async function CoursePage({ params }: CoursePageProps) {
-    const { id } = await params;
-
-    const course = await getCourse(id);
-
-    if (!course) {
-        notFound();
-    }
-
     return (
-        <main className="min-h-screen p-8">
-            <div className="max-w-3xl mx-auto">
-                <h1 className="text-4xl font-bold mb-4">
-                    {course.title}
-                </h1>
+        <main className="min-h-screen bg-white px-6 py-16">
+            <div className="mx-auto max-w-6xl">
+                <section className="mb-14">
+                    <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
+                        Advanced Web Technologies
+                    </p>
 
-                <p className="text-lg mb-4">
-                    {course.description}
-                </p>
+                    <h1 className="text-5xl font-bold tracking-tight text-slate-950">
+                        Course Catalog
+                    </h1>
 
-                <p className="mb-4">
-                    Credits: {course.credits}
-                </p>
+                    <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-500">
+                        Explore our collection of modern web development courses and
+                        discover the technologies used to build today's applications.
+                    </p>
+                </section>
 
-                <LikeButton initialLikes={course.likes} />
+                <section>
+                    <div className="mb-8 flex items-end justify-between">
+                        <div>
+                            <p className="mb-2 text-sm font-semibold text-blue-600">
+                                Available Courses
+                            </p>
+
+                            <h2 className="text-3xl font-bold tracking-tight text-slate-950">
+                                Choose your course
+                            </h2>
+                        </div>
+
+                        <span className="hidden text-sm text-slate-400 md:block">
+              {courses.length} courses
+            </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {courses.map((course) => (
+                            <CourseCard
+                                key={course.id}
+                                id={course.id}
+                                title={course.title}
+                                description={course.description}
+                                credits={course.credits}
+                                likes={course.likes}
+                            />
+                        ))}
+                    </div>
+                </section>
             </div>
         </main>
     );
